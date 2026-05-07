@@ -1,0 +1,251 @@
+@baseUrl = http://localhost:3000
+@token = PEGA_AQUI_EL_ACCESS_TOKEN
+@clientId = PEGA_AQUI_CLIENT_ID
+@projectId = PEGA_AQUI_PROJECT_ID
+@deliveryNoteId = PEGA_AQUI_DELIVERYNOTE_ID
+@materialDeliveryNoteId = PEGA_AQUI_MATERIAL_DELIVERYNOTE_ID
+
+### Health
+GET {{baseUrl}}/health
+
+### Register
+POST {{baseUrl}}/api/user/register
+Content-Type: application/json
+
+{
+  "email": "prueba_mailtrap_03@example.com",
+  "password": "Password123"
+}
+
+### Validar email
+PUT {{baseUrl}}/api/user/validation
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "code": "344597"
+}
+
+### Login
+POST {{baseUrl}}/api/user/login
+Content-Type: application/json
+
+{
+  "email": "demo@example.com",
+  "password": "Password123"
+}
+
+### Datos personales
+PUT {{baseUrl}}/api/user/register
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Mario",
+  "lastName": "Díez",
+  "nif": "12345678Z",
+  "address": {
+    "street": "Calle Mayor",
+    "number": "1",
+    "postal": "28013",
+    "city": "Madrid",
+    "province": "Madrid"
+  }
+}
+
+### Crear compañía
+PATCH {{baseUrl}}/api/user/company
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Bildy Construcciones SL",
+  "cif": "B12345678",
+  "isFreelance": false,
+  "address": {
+    "street": "Calle Empresa",
+    "number": "10",
+    "postal": "28013",
+    "city": "Madrid",
+    "province": "Madrid"
+  }
+}
+
+### Crear cliente
+POST {{baseUrl}}/api/client
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Cliente García SL",
+  "cif": "B87654322",
+  "email": "cliente@example.com",
+  "phone": "600000000",
+  "address": {
+    "street": "Calle Cliente",
+    "number": "22",
+    "postal": "28001",
+    "city": "Madrid",
+    "province": "Madrid"
+  }
+}
+
+### Listar clientes
+GET {{baseUrl}}/api/client?page=1&limit=10&sort=-createdAt
+Authorization: Bearer {{token}}
+
+### Crear proyecto
+POST {{baseUrl}}/api/project
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "client": "{{clientId}}",
+  "name": "Reforma vivienda",
+  "projectCode": "PRJ-001",
+  "address": {
+    "street": "Calle Obra",
+    "number": "3",
+    "postal": "28002",
+    "city": "Madrid",
+    "province": "Madrid"
+  },
+  "email": "obra@example.com",
+  "notes": "Proyecto de prueba",
+  "active": true
+}
+
+### Crear albarán de horas
+POST {{baseUrl}}/api/deliverynote
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "project": "{{projectId}}",
+  "format": "hours",
+  "description": "xPDF Trabajo realizado en obra con cloudinary",
+  "workDate": "2026-05-05",
+  "hours": 8,
+  "workers": [
+    { "name": "Operario 1", "hours": 4 },
+    { "name": "Operario 2", "hours": 4 }
+  ]
+}
+
+### Crear albarán de material
+POST {{baseUrl}}/api/deliverynote
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "project": "{{projectId}}",
+  "format": "material",
+  "description": "Entrega de material",
+  "workDate": "2026-05-03",
+  "material": "Cemento",
+  "quantity": 10,
+  "unit": "sacos"
+}
+
+### Descargar PDF
+GET {{baseUrl}}/api/deliverynote/pdf/{{deliveryNoteId}}
+Authorization: Bearer {{token}}
+
+### Firmar albarán
+PATCH {{baseUrl}}/api/deliverynote/{{deliveryNoteId}}/sign
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="signature"; filename="firma.png"
+Content-Type: image/png
+
+< ./logo.png
+--boundary--
+
+### Dashboard
+GET {{baseUrl}}/api/dashboard
+Authorization: Bearer {{token}}
+
+### Intentar borrar albarán firmado
+DELETE {{baseUrl}}/api/deliverynote/{{deliveryNoteId}}
+Authorization: Bearer {{token}}
+
+##
+
+### Obtener cliente por ID
+GET {{baseUrl}}/api/client/{{clientId}}
+Authorization: Bearer {{token}}
+
+### Actualizar cliente
+PUT {{baseUrl}}/api/client/{{clientId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Cliente García Actualizado SL",
+  "phone": "611111111"
+}
+
+### Archivar cliente
+DELETE {{baseUrl}}/api/client/{{clientId}}?soft=true
+Authorization: Bearer {{token}}
+
+### Listar clientes archivados
+GET {{baseUrl}}/api/client/archived
+Authorization: Bearer {{token}}
+
+### Restaurar cliente archivado
+PATCH {{baseUrl}}/api/client/{{clientId}}/restore
+Authorization: Bearer {{token}}
+
+##
+
+### Listar proyectos
+GET {{baseUrl}}/api/project?page=1&limit=10&sort=-createdAt
+Authorization: Bearer {{token}}
+
+### Obtener proyecto por ID
+GET {{baseUrl}}/api/project/{{projectId}}
+Authorization: Bearer {{token}}
+
+### Actualizar proyecto
+PUT {{baseUrl}}/api/project/{{projectId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Reforma vivienda actualizada",
+  "notes": "Notas actualizadas del proyecto",
+  "active": true
+}
+
+### Archivar proyecto
+DELETE {{baseUrl}}/api/project/{{projectId}}?soft=true
+Authorization: Bearer {{token}}
+
+### Listar proyectos archivados
+GET {{baseUrl}}/api/project/archived
+Authorization: Bearer {{token}}
+
+### Restaurar proyecto archivado
+PATCH {{baseUrl}}/api/project/{{projectId}}/restore
+Authorization: Bearer {{token}}
+
+##
+
+### Listar albaranes
+GET {{baseUrl}}/api/deliverynote?page=1&limit=10&sort=-workDate
+Authorization: Bearer {{token}}
+
+### Obtener albarán por ID
+GET {{baseUrl}}/api/deliverynote/{{deliveryNoteId}}
+Authorization: Bearer {{token}}
+
+### Obtener albarán de material por ID
+GET {{baseUrl}}/api/deliverynote/{{materialDeliveryNoteId}}
+Authorization: Bearer {{token}}
+
+### Borrar albarán no firmado
+DELETE {{baseUrl}}/api/deliverynote/{{materialDeliveryNoteId}}
+Authorization: Bearer {{token}}
