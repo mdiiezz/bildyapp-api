@@ -17,11 +17,9 @@ export default {
     '!src/services/notification.service.js',
 
     '!src/routes/**/*.js',
+    'src/routes/deliverynote.routes.js',
 
-    '!src/middleware/role.middleware.js',
-    '!src/middleware/upload.js',
-
-    '!src/middleware/error-handler.js'
+    '!src/middleware/role.middleware.js'
   ],
   coveragePathIgnorePatterns: ['/node_modules/', '/tests/'],
   verbose: true
